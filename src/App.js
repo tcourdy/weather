@@ -7,8 +7,49 @@ import CardTitle from 'react-md/lib/Cards/CardTitle';
 import CardText from 'react-md/lib/Cards/CardText';
 import CircularProgress from 'react-md/lib/Progress/CircularProgress';
 import {Helmet} from "react-helmet";
+import List from 'react-md/lib/Lists/List';
+import ListItem from 'react-md/lib/Lists/ListItem';
 import './App.css';
 
+var daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+class FutureForecast extends Component {
+    render() {
+        var dailyMinMax = this.props.dailyData.map((data, index) => {
+            if(!index) {
+                return "";
+            } else {
+                var date = new Date(data.time * 1000);                
+                return <ListItem id={daysOfWeek[date.getDay()]}
+                                 primaryText={daysOfWeek[date.getDay()]}
+                                 secondaryText={"Max:" + data.temperatureMax  + "----Min:" + data.temperatureMin} />
+            }
+        });
+
+        return(
+            <Card className="md-cell--middle">
+                <CardTitle title="7 day forecast"/>
+                <CardText>
+                    <div className="md-text-left md-display-1 weather-card-pad">
+                        <List ordered>
+                            {dailyMinMax} 
+                        </List>
+                    </div>
+                </CardText>
+            </Card>
+        )
+    }
+}
+
+class WeatherCardItem extends Component {
+    render() {
+        return (
+            <div className="md-text-left md-display-1 weather-card-pad">
+                {this.props.description}
+            </div>
+        );
+    }
+}
 
 class WeatherCard extends Component {
     constructor() {
@@ -36,41 +77,35 @@ class WeatherCard extends Component {
         var flipCSS = this.state.flipped ? "flipped" : "";
         
         return (
-            <div>
+            <div className="centerCard">
                 <section className="container">
                     <div id="card" className={flipCSS}>
                         <figure className={"front"}>
                             <Card className="md-cell--middle">
                                 <CardTitle title={this.props.city} />
                                 <CardText>
-                                    <div className="md-text-left md-display-1 weather-card-pad">
-                                        {weather.currently.summary}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"Currently: " + weather.currently.temperature + " F"}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"Precipitation: " + weather.currently.precipProbability * 100 + " %"}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"High: " + weather.daily.data[0].temperatureMax + " F"}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"Low: " + weather.daily.data[0].temperatureMin + " F"}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"Sunrise: " + sunriseTime}
-                                    </div>
-                                    <div className="md-text-left weather-card-pad">
-                                        {"Sunset: " + sunsetTime}
-                                    </div>
+                                    <WeatherCardItem description={weather.currently.summary} />
+                                    <WeatherCardItem
+                                        description={"Currently: " + weather.currently.temperature + " F"} />
+                                    <WeatherCardItem
+                                        description={"Precipitation: "
+                                                   + weather.currently.precipProbability * 100 + " %"} />
+                                    <WeatherCardItem
+                                        description={"High: " + weather.daily.data[0].temperatureMax + " F"} />
+                                    <WeatherCardItem
+                                        description={"Low: " + weather.daily.data[0].temperatureMin + " F"} />
+                                    <WeatherCardItem description={"Sunrise: " + sunriseTime} />
+                                    <WeatherCardItem description={"Sunset: " + sunsetTime} />
                                 </CardText>
                             </Card>
+                            <Button raised label="7 day forecast" onClick={this.flip} />
                         </figure>
-                        <figure className="back">This is a test</figure>
+                        <figure className="back">
+                            <FutureForecast dailyData={this.props.weather.daily.data} />                        
+                            <Button raised label="Today's weather" onClick={this.flip} />
+                        </figure>
                     </div>
                 </section>
-                <Button raised label="Flip Card" onClick={this.flip} />
             </div>
         );
     }
