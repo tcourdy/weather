@@ -2,8 +2,8 @@ const express = require('express');
 require('isomorphic-fetch');
 const app = express();
 const port = 3001;
-const DARK_SKY_KEY = "2b86596fd9c62ca48e73e145e2732702";
-const GOOGLE_PLACES_KEY = "AIzaSyDCth67ou9qGH9dAaR7jHMEJEyfLNajxi8";
+const DARK_SKY_KEY = "<your dark sky key here>";
+const GOOGLE_PLACES_KEY = "<your google places key here>";
 
 const DARK_SKY_URL_PREFIX = "https://api.darksky.net/forecast/"
       + DARK_SKY_KEY + "/";
